@@ -1,0 +1,65 @@
+Metadata-Version: 2.4
+Name: py_twitch_eventsub
+Version: 0.1.0
+Summary: A lightweight async library for handling Twitch EventSub WebSocket events
+Author-email: pmrch <patrik.fejes@gmail.com>
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: pydantic>=2.12
+Requires-Dist: websockets>=14.0
+Requires-Dist: httpx>=0.26
+
+# py-twitch-eventsub
+
+A lightweight async library for handling Twitch EventSub WebSocket events in Python.  
+Built on top of **websockets**, **httpx**, and **pydantic v2**, with a focus on being simple, transparent, and reliable.
+
+---
+
+## ⚡ Overview
+
+`py-twitch-eventsub` sets up a Twitch EventSub WebSocket session, automatically handles the handshake, and manages a subset of events:
+
+- ✅ `session_welcome`
+- ✅ `session_keepalive`
+- ✅ `session_reconnect`
+- ✅ `notification` (with `channel.chat.message` and `channel.cheer`)
+- ✅ `revocation` (logged as a warning)
+- ⚠️ Other events are recognized but ignored with a warning.
+
+---
+
+## 🔧 Example
+
+```python
+import asyncio
+from my_lib.main import create_twitch_controller
+from my_lib.logger import setup_universal_logging 
+
+async def main():
+    # Setup the colored console + file logger
+    setup_universal_logging(level="INFO")
+
+    # Initialize the controller
+    controller = await create_twitch_controller(ws_url=None)
+
+    @controller.on_chat_message
+    async def handle_chat(event):
+        print(f"{event.chatter_user_name}: {event.message.text}")
+
+    @controller.on_cheer
+    async def handle_bits(event):
+        user = event.user_name or "anonymous"
+        print(f"{user} cheered {event.bits} bits!")
+
+    # Start the persistent loop
+    await controller.start()
+
+if __name__ == "__main__":
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        pass
