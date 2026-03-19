@@ -9,9 +9,9 @@ from enum import Enum
 from websockets import Data
 from websockets.exceptions import WebSocketException
 
-from models import Message, WelcomeMessage, NotificationMessage
-from chat import ChannelChatMessage
-from cheer import ChannelCheer
+from .models import Message, WelcomeMessage, NotificationMessage
+from .chat import ChannelChatMessage
+from .cheer import ChannelCheer
 
 NotificationEvent = Union[ChannelChatMessage | ChannelCheer]
 CallbackType = Callable[[NotificationEvent, datetime], Awaitable[None]]
@@ -86,8 +86,10 @@ class HandlerHub:
     async def handle_notification(self, ntf: NotificationEvent, ts: datetime) -> None:
         key = type(ntf)
         
-        if ntf not in self.callbacks.keys():
-            print("Not registered")
+        if key not in self.callbacks:
+            print(f"Not registered: {key}")
+            for i, j in self.callbacks.items():
+                print(f"{i} -> {j}")
             return
         
         await self.callbacks[key](ntf, ts)

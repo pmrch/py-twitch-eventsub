@@ -2,7 +2,7 @@ import httpx
 
 from enum import Enum
 from logging import Logger
-from shared import UserConfig
+from .shared import UserConfig
 
 class SubEvent(Enum):
     CHAT_MESSAGE = "channel.chat.message"

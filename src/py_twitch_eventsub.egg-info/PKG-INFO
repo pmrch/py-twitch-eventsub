@@ -36,17 +36,16 @@ Built on top of **websockets**, **httpx**, and **pydantic v2**, with a focus on 
 
 ```python
 import asyncio
-from my_lib.main import create_twitch_controller
-from my_lib.logger import setup_universal_logging 
+from py_twitch_eventsub import TwitchController
+from py_twitch_eventsub import setup_logging 
 
 async def main():
     # Setup the colored console + file logger
-    setup_universal_logging(level="INFO")
+    setup_logging(name="TwitchEventSub",level="INFO")
 
     # Initialize the controller
-    controller = await create_twitch_controller(ws_url=None)
+    controller = TwitchController()
 
-    @controller.on_chat_message
     async def handle_chat(event):
         print(f"{event.chatter_user_name}: {event.message.text}")
 

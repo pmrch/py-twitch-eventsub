@@ -1,8 +1,8 @@
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional
 from pydantic import BaseModel
 
-from shared import MessageId
+from .shared import MessageId
 
 class MessageType(Enum):
     TEXT = "text"

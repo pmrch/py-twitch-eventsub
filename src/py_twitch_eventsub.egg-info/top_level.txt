@@ -1,1 +1,1 @@
-py-twitch-eventsub
+py_twitch_eventsub

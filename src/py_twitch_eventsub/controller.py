@@ -10,11 +10,11 @@ from websockets import Data
 from websockets.asyncio.client import connect
 from websockets.protocol import State
 
-from models import Message, WelcomeMessage, NotificationMessage
-from handlers import ExcAction, HandlerHub, CallbackType, NotificationEvent
-from shared import UserConfig, read_config
-from logger import setup_logging
-from subscriber import subscribe_to_event, SubEvent
+from .models import Message, WelcomeMessage, NotificationMessage
+from .handlers import ExcAction, HandlerHub, CallbackType, NotificationEvent
+from .shared import UserConfig, read_config
+from .logger import setup_logging
+from .subscriber import subscribe_to_event, SubEvent
 
 class TwitchController:
     def __init__(self) -> None:
@@ -27,8 +27,8 @@ class TwitchController:
         self.logger: logging.Logger = setup_logging("EventSub")
         self.handlers: HandlerHub = HandlerHub()
 
-    def register_callback(self, evt: NotificationEvent, callback: CallbackType) -> None:
-        self.handlers.register_callback(type(evt), callback)
+    def register_callback(self, evt: type[NotificationEvent], callback: CallbackType) -> None:
+        self.handlers.register_callback(evt, callback)
         
     def set_dev_mode(self, dev_ws: str, dev_http: str) -> None:
         self.ws_endpoint = dev_ws

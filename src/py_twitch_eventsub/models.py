@@ -1,10 +1,9 @@
-from enum import Enum
 from datetime import datetime
 from typing import Optional, Any
 from pydantic import BaseModel, JsonValue, model_validator
 
-from chat import ChannelChatMessage
-from cheer import ChannelCheer
+from .chat import ChannelChatMessage
+from .cheer import ChannelCheer
 
 NotificationEvent = ChannelChatMessage | ChannelCheer
     
