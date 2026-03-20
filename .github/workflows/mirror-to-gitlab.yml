@@ -1,0 +1,38 @@
+name: Mirror to GitLab
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Mirror to GitLab
+        env:
+          GITLAB_SSH_KEY: ${{ secrets.GITLAB_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$GITLAB_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p 2222 git-ssh.pdev2k.pw >> ~/.ssh/known_hosts
+          
+          # Configure SSH to use port 2222
+          cat >> ~/.ssh/config <<EOF
+          Host git-ssh.pdev2k.pw
+            Port 2222
+            User git
+            IdentityFile ~/.ssh/id_ed25519
+            StrictHostKeyChecking accept-new
+          EOF
+          
+          # Now you can use standard git syntax
+          git remote add gitlab git@git-ssh.pdev2k.pw:publicprojects/py-twitch-eventsub.git
+          git push gitlab --all --force
+          git push gitlab --tags --force
